@@ -1,13 +1,14 @@
 "use client";
 export const dynamic = "force-dynamic";
-import { FormEvent, useState } from "react";
+
+import { Suspense, FormEvent, useState } from "react";
 import { signIn, getSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import { toast } from "@/lib/toast";
 
-export default function SignInPage() {
+function SignInPage() {
   const params = useSearchParams();
   const callbackUrl = params.get("callbackUrl") || "/";
   const [email, setEmail] = useState("");
@@ -159,5 +160,13 @@ export default function SignInPage() {
         </p>
       </main>
     </>
+  );
+}
+
+export default function SignInPageWrapper() {
+  return (
+    <Suspense fallback={null}>
+      <SignInPage />
+    </Suspense>
   );
 }
