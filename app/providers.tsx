@@ -1,8 +1,9 @@
 "use client";
-import { SessionProvider } from 'next-auth/react';
-import { ReactNode, useEffect, useState } from 'react';
-import { ToastContainer } from '@/components/Toast';
-import { Toast, toast } from '@/lib/toast';
+import { SessionProvider } from "next-auth/react";
+import { ReactNode, useEffect, useState } from "react";
+import { ToastContainer } from "@/components/Toast";
+import { toast } from "@/lib/toast";
+import type { Toast } from "@/components/Toast";
 
 export default function Providers({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
@@ -19,5 +20,3 @@ export default function Providers({ children }: { children: ReactNode }) {
     </SessionProvider>
   );
 }
-
-
