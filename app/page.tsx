@@ -70,7 +70,7 @@ export default async function HomePage() {
               <h3 className="text-2xl font-bold text-gray-800 mb-2">
                 No books yet
               </h3>
-              <p className="text-gray-600 mb-6">
+              <p className="text-gray-600 mb-6 text-center">
                 Start building your library by adding your first book.
               </p>
               {/* Show Add Book button here only if NOT logged in or (logged in and has no books) */}

@@ -1,11 +1,15 @@
 "use client";
 import Link from "next/link";
+
 import { useSession, signIn, signOut } from "next-auth/react";
 import { toast } from "@/lib/toast";
+import { useState, useRef } from "react";
 
 export default function Navbar() {
   const { data: session, status } = useSession();
   const isAuthed = status === "authenticated";
+  const [showUserCard, setShowUserCard] = useState(false);
+  const userCardTimeout = useRef<NodeJS.Timeout | null>(null);
 
   return (
     <nav className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-pink-500 shadow-lg backdrop-blur-md bg-opacity-80">
@@ -44,15 +48,97 @@ export default function Navbar() {
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
             {isAuthed && (
-              <span className="hidden sm:block text-sm text-white/90 truncate max-w-32 font-medium">
-                {session?.user?.name || session?.user?.email}
-              </span>
+              <div
+                className="relative outline-none focus:outline-none focus-visible:outline-none"
+                onMouseEnter={() => {
+                  if (userCardTimeout.current)
+                    clearTimeout(userCardTimeout.current);
+                  setShowUserCard(true);
+                }}
+                onMouseLeave={() => {
+                  userCardTimeout.current = setTimeout(
+                    () => setShowUserCard(false),
+                    120
+                  );
+                }}
+                onFocus={() => setShowUserCard(true)}
+                onBlur={() => setShowUserCard(false)}
+                tabIndex={0}
+              >
+                <span
+                  className="block text-xs sm:text-sm text-white/90 truncate max-w-[90px] sm:max-w-32 font-medium text-center cursor-pointer transition-colors duration-150 hover:bg-white/20 hover:text-white px-2 py-1 rounded outline-none"
+                  title={
+                    (session?.user?.name || session?.user?.email) ?? undefined
+                  }
+                >
+                  {session?.user?.name || session?.user?.email}
+                </span>
+                {showUserCard && (
+                  <div
+                    className="absolute left-1/2 z-50 -translate-x-1/2 mt-2 w-72 rounded-2xl bg-white/80 shadow-2xl border-2 border-transparent bg-clip-padding p-5 text-gray-900 text-sm animate-fade-in backdrop-blur-xl outline-none focus:outline-none focus-visible:outline-none"
+                    style={{
+                      borderImage:
+                        "linear-gradient(90deg, #6366f1 0%, #a21caf 100%) 1",
+                    }}
+                  >
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="flex items-center justify-center h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 text-white text-lg font-bold shadow">
+                        <svg
+                          className="h-6 w-6"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.5}
+                            d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.655 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                        </svg>
+                      </div>
+                      <div>
+                        <div className="font-bold text-base text-gray-900 mb-0.5 truncate">
+                          <span className="font-semibold text-gray-700">
+                            Name:
+                          </span>{" "}
+                          {session?.user?.name || (
+                            <span className="italic text-gray-400">
+                              No Name
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-xs text-gray-600 truncate">
+                          <span className="font-semibold text-gray-700">
+                            Email:
+                          </span>{" "}
+                          {session?.user?.email || (
+                            <span className="italic text-gray-400">
+                              No Email
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className="font-semibold text-gray-700">
+                        Status:
+                      </span>
+                      <span className="inline-block px-3 py-1 rounded-full bg-gradient-to-r from-green-400 to-green-600 text-white text-xs font-semibold align-middle shadow">
+                        Logged in
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
             )}
             {isAuthed ? (
               <button
                 onClick={() => {
                   toast.info("Signing out...");
-                  signOut();
+                  setTimeout(() => {
+                    signOut();
+                  }, 900); // 900ms delay so toast is visible
                 }}
                 className="rounded-full bg-white/20 px-4 py-2 text-white font-semibold text-sm shadow hover:bg-white/30 transition-all focus:outline-none focus:ring-2 focus:ring-white/50"
               >
@@ -62,7 +148,9 @@ export default function Navbar() {
               <button
                 onClick={() => {
                   toast.info("Redirecting to sign in...");
-                  signIn();
+                  setTimeout(() => {
+                    signIn();
+                  }, 900);
                 }}
                 className="rounded-full bg-white/20 px-4 py-2 text-white font-semibold text-sm shadow hover:bg-white/30 transition-all focus:outline-none focus:ring-2 focus:ring-white/50"
               >
