@@ -142,7 +142,7 @@ export default function Navbar() {
                 }}
                 className="rounded-full bg-white/20 px-4 py-2 text-white font-semibold text-sm shadow hover:bg-white/30 transition-all focus:outline-none focus:ring-2 focus:ring-white/50"
               >
-                Logout
+                Sign Out
               </button>
             ) : (
               <button
@@ -154,7 +154,7 @@ export default function Navbar() {
                 }}
                 className="rounded-full bg-white/20 px-4 py-2 text-white font-semibold text-sm shadow hover:bg-white/30 transition-all focus:outline-none focus:ring-2 focus:ring-white/50"
               >
-                Login
+                Sign In
               </button>
             )}
           </div>

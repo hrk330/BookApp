@@ -44,7 +44,7 @@ function SignInPage() {
       // Redirect to home page after successful login/signup
       setTimeout(() => {
         router.push("/");
-      }, 1000);
+      }, 200);
     } catch (err: any) {
       const errorMessage = err.message || "Authentication failed";
       setError(errorMessage);
@@ -147,12 +147,27 @@ function SignInPage() {
               </>
             )}
           </p>
-          <p className="mt-4 text-xs text-gray-500 text-center">
-            Back to{" "}
-            <Link href="/" className="underline hover:text-gray-700">
-              home
+          <div className="mt-6 flex justify-center">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 px-5 py-2.5 text-white font-bold shadow-lg hover:scale-105 hover:from-blue-700 hover:to-purple-700 transition-all duration-200 text-sm"
+            >
+              <svg
+                className="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3 12l2-2m0 0l7-7 7 7m-9 2v8m4-8v8m5 0a2 2 0 002-2v-5a2 2 0 00-.586-1.414l-7-7a2 2 0 00-2.828 0l-7 7A2 2 0 003 15v5a2 2 0 002 2h3"
+                />
+              </svg>
+              Home
             </Link>
-          </p>
+          </div>
         </div>
       </main>
     </div>

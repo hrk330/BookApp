@@ -60,13 +60,20 @@ export default function AddBookPage() {
       <Navbar />
       <main className="flex flex-col items-center justify-center min-h-[80vh] px-2 py-8">
         <div className="w-full max-w-md rounded-3xl shadow-2xl border border-gray-200 bg-white/80 backdrop-blur-md p-8">
+          <button
+            type="button"
+            onClick={() => router.push("/")}
+            className="mb-6 w-full rounded-xl bg-gradient-to-r from-gray-400 to-blue-700 px-4 py-2.5 text-white font-bold shadow hover:scale-105 hover:from-gray-500 hover:to-gray-800 transition-all duration-200"
+          >
+            ← Back to Home
+          </button>
           <h1 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-blue-700 via-purple-600 to-pink-500 bg-clip-text text-transparent drop-shadow-lg mb-6 text-center">
             Add a Book
           </h1>
           {status !== "authenticated" && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
               <p className="text-sm text-red-600 text-center">
-                You must be logged in to add books.
+                You must be signed in to add books.
               </p>
             </div>
           )}
