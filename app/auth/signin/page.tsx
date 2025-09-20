@@ -3,13 +3,14 @@ export const dynamic = "force-dynamic";
 
 import { Suspense, FormEvent, useState } from "react";
 import { signIn, getSession } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import { toast } from "@/lib/toast";
 
 function SignInPage() {
   const params = useSearchParams();
+  const router = useRouter();
   const callbackUrl = params.get("callbackUrl") || "/";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -40,10 +41,9 @@ function SignInPage() {
         toast.success("Signed in successfully!");
       }
 
-      // Force session re-fetch and reload to ensure client gets updated session
-      await getSession();
+      // Redirect to home page after successful login/signup
       setTimeout(() => {
-        window.location.reload();
+        router.push("/");
       }, 1000);
     } catch (err: any) {
       const errorMessage = err.message || "Authentication failed";
@@ -55,111 +55,107 @@ function SignInPage() {
   };
 
   return (
-    <>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-100">
       <Navbar />
-      <main className="mx-auto max-w-md px-4 py-6">
-        <h1 className="text-2xl font-bold mb-6 text-center">
-          {mode === "signin" ? "Sign In" : "Create Account"}
-        </h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {mode === "signup" && (
+      <main className="flex flex-col items-center justify-center min-h-[80vh] px-2 py-8">
+        <div className="w-full max-w-md rounded-3xl shadow-2xl border border-gray-200 bg-white/80 backdrop-blur-md p-8">
+          <h1 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-blue-700 via-purple-600 to-pink-500 bg-clip-text text-transparent drop-shadow-lg mb-6 text-center">
+            {mode === "signin" ? "Sign In" : "Create Account"}
+          </h1>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {mode === "signup" && (
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">
+                  Name
+                </label>
+                <input
+                  className="w-full rounded-xl border border-gray-300 px-4 py-2.5 bg-white/70 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required={mode === "signup"}
+                  placeholder="Your Name"
+                />
+              </div>
+            )}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Name
+              <label className="block text-sm font-semibold text-gray-700 mb-1">
+                Email
               </label>
               <input
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required={mode === "signup"}
-                placeholder="Your Name"
+                type="email"
+                className="w-full rounded-xl border border-gray-300 px-4 py-2.5 bg-white/70 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                placeholder="you@example.com"
               />
             </div>
-          )}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email
-            </label>
-            <input
-              type="email"
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              placeholder="you@example.com"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Password
-            </label>
-            <input
-              type="password"
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              placeholder="Password"
-            />
-          </div>
-          {error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-sm text-red-600">{error}</p>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">
+                Password
+              </label>
+              <input
+                type="password"
+                className="w-full rounded-xl border border-gray-300 px-4 py-2.5 bg-white/70 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                placeholder="Password"
+              />
             </div>
-          )}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-lg bg-gray-900 px-4 py-2 text-white hover:bg-gray-800 transition-colors font-medium disabled:opacity-60"
-          >
-            {loading
-              ? "Please wait..."
-              : mode === "signin"
-              ? "Sign In"
-              : "Sign Up"}
-          </button>
-        </form>
-        <div className="my-6 text-center text-sm text-gray-600">or</div>
-        <button
-          onClick={() => {
-            toast.info("Redirecting to Google...");
-            signIn("google");
-          }}
-          className="w-full rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition-colors font-medium"
-        >
-          Continue with Google
-        </button>
-        <p className="mt-6 text-sm text-center">
-          {mode === "signin" ? (
-            <>
-              New here?{" "}
-              <button
-                className="text-blue-600 hover:underline font-medium"
-                onClick={() => setMode("signup")}
-              >
-                Create an account
-              </button>
-            </>
-          ) : (
-            <>
-              Already have an account?{" "}
-              <button
-                className="text-blue-600 hover:underline font-medium"
-                onClick={() => setMode("signin")}
-              >
-                Sign in
-              </button>
-            </>
-          )}
-        </p>
-        <p className="mt-4 text-xs text-gray-500 text-center">
-          Back to{" "}
-          <Link href="/" className="underline hover:text-gray-700">
-            home
-          </Link>
-        </p>
+            {error && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-xl">
+                <p className="text-sm text-red-600">{error}</p>
+              </div>
+            )}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full rounded-xl bg-gradient-to-r from-blue-700 to-purple-600 px-4 py-2.5 text-white font-bold shadow-lg hover:scale-105 hover:from-blue-800 hover:to-purple-700 transition-all duration-200 disabled:opacity-60"
+            >
+              {loading
+                ? "Please wait..."
+                : mode === "signin"
+                ? "Sign In"
+                : "Sign Up"}
+            </button>
+          </form>
+          <div className="my-6 text-center text-sm text-gray-600 font-medium">
+            or
+          </div>
+
+          <p className="mt-7 text-sm text-center">
+            {mode === "signin" ? (
+              <>
+                New here?{" "}
+                <button
+                  className="text-blue-600 hover:underline font-semibold"
+                  onClick={() => setMode("signup")}
+                >
+                  Create an account
+                </button>
+              </>
+            ) : (
+              <>
+                Already have an account?{" "}
+                <button
+                  className="text-blue-600 hover:underline font-semibold"
+                  onClick={() => setMode("signin")}
+                >
+                  Sign in
+                </button>
+              </>
+            )}
+          </p>
+          <p className="mt-4 text-xs text-gray-500 text-center">
+            Back to{" "}
+            <Link href="/" className="underline hover:text-gray-700">
+              home
+            </Link>
+          </p>
+        </div>
       </main>
-    </>
+    </div>
   );
 }
 

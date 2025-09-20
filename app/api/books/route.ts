@@ -5,7 +5,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 export async function GET() {
+  const session = await getServerSession(authOptions);
+  if (!session || !(session.user as { id?: string })?.id) {
+    return NextResponse.json([], { status: 200 });
+  }
   const books = await prisma.book.findMany({
+    where: { userId: (session.user as { id: string }).id },
     orderBy: { createdAt: "desc" },
   });
   return NextResponse.json(books);
